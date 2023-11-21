@@ -198,4 +198,23 @@ public class JunoResourcesService implements Serializable {
 		}
 	}
 
+	public String cancelChance(String code) throws Exception {
+
+		JunoAccessToken accessToken = this.getJunoToken();
+
+		Client client = new HostIgnoringClient("https://api.juno.com.br/").hostIgnoringClient();
+		WebResource webResource = client.resource("https://api.juno.com.br/charges/" + code + "/cancelation");
+
+		ClientResponse clientResponse = webResource.accept(MediaType.APPLICATION_JSON).header("X-Api-Version", 2)
+				.header("X-Resource-Token", APITokens.TOKEN_PRIVATE_JUNO)
+				.header("Authorization", "Bearer " + accessToken.getAccess_token()).put(ClientResponse.class);
+
+		if (clientResponse.getStatus() == 204) {
+			return "Cancelado com sucesso";
+		}
+
+		return clientResponse.getEntity(String.class);
+
+	}
+
 }
